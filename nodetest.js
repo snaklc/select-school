@@ -8,13 +8,14 @@ const client = new Client({
     database: 'okullarim'
 });
 
+//veritabanına bağlandık
 client.connect(err => {
     if (err) {
         console.error('connection error', err.stack)
     } else {
         console.log('connected')
     }
-})
+});
 
 var express = require('express');
 var app = express();
@@ -25,19 +26,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', function (req, res) {
     client
-        .query("select * from nokta")
+        .query("select gid, ST_AsGeoJSON(ST_Transform(geom,4326))::json As geometry, okul_adi from nokta")
         .then(result => console.log(res.send(result.rows)))
         .catch(e => console.log(e.stack))
     //  .then(() => client.end())
-
-    console.log("hi");
-
 })
 
 app.post('/', function (req, res) {
     const okul_adi = req.body.okul_adi;
     let geom = req.body.geom;
-    const gid = 4;
+    const gid = 7;
     console.log('req.body:', req.body);
 
 
